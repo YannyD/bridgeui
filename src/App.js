@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { TransferButton } from "./components/TransferButton/index.js"
+import { InjectedConnector } from "@web3-react/injected-connector";
+import { useWeb3React } from '@web3-react/core';
+import { useEffect } from 'react';
+
+export const injected = new InjectedConnector({
+  supportedChainIds: [1, 3, 4, 56, 97],
+});
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const { account, chainId, active, activate } = useWeb3React();
+  useEffect(async () => {
+    if (!account) {
+      await activate(injected);
+    }
+  }, []);
+
+  if (active) {
+    return (
+      <div>
+        <TransferButton />
+      </div>
+    );
+  }
+  else { return (<div>Loading...</div>) }
 }
 
 export default App;
